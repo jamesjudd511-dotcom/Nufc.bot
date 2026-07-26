@@ -1,9 +1,12 @@
-name: NUFC News Email
+name: NUFC News
 
 on:
   schedule:
     - cron: '0 7,12,17 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   send-news:
@@ -19,9 +22,17 @@ jobs:
       - name: Install dependencies
         run: pip install feedparser
 
-      - name: Fetch and email news
+      - name: Fetch, email, and build page
         env:
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
         run: python scripts/nufc_news.py
+
+      - name: Commit and push page
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add docs/index.html
+          git diff --staged --quiet || git commit -m "Update news page"
+          git push
