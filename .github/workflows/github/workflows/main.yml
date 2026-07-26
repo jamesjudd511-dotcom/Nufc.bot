@@ -1,0 +1,27 @@
+name: NUFC News Email
+
+on:
+  schedule:
+    - cron: '0 7,12,17 * * *'  # 8am, 1pm, 6pm UK time (BST/UTC+1)
+  workflow_dispatch:  # lets you trigger it manually from the Actions tab too
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install feedparser
+
+      - name: Fetch and email news
+        env:
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+        run: python scripts/nufc_news.py
