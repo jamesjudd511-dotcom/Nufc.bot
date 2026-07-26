@@ -27,7 +27,7 @@ def build_email_body():
             lines.append(f"- {title} ({source})\n  {link}\n")
     return "\n".join(lines)
 
-def send_email(body):
+def body):
     msg = MIMEText(body)
     msg["Subject"] = f"NUFC News — {datetime.now().strftime('%d %b, %H:%M')}"
     msg["From"] = os.environ["EMAIL_ADDRESS"]
